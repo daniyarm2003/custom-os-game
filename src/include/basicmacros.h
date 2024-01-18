@@ -1,6 +1,9 @@
-#ifndef _OS_BASIC_MACROS_h
-#define _OS_BASIC_MACROS_h
+#ifndef _OS_BASIC_MACROS_H
+#define _OS_BASIC_MACROS_H
 
 #define UNUSED(x) ((void)(x))
+
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 #endif
