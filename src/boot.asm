@@ -30,12 +30,28 @@ stack_bottom:
 resb            0x4000
 stack_top:
 
+%include        "src/gdt.asm"
+
 section         .text
 
 global          _start
 _start:
 
-mov             esp, stack_top
+lgdt            [gdt_desc]
+jmp             CODESEG:post_gdt
+
+post_gdt:
+
+mov             cx, DATASEG
+
+mov             ds, cx
+mov             ss, cx
+mov             es, cx
+mov             fs, cx
+mov             gs, cx
+
+mov             ebp, stack_top
+mov             esp, ebp
 
 push            eax
 push            ebx

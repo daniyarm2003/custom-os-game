@@ -10,6 +10,10 @@ SECTIONS {
         *(.text)
     }
 
+    .gdt BLOCK(4K) : ALIGN(4K) {
+        *(.gdt)
+    }
+
     .rodata BLOCK(4K) : ALIGN(4K) {
         *(.rodata)
     }
