@@ -2,9 +2,12 @@ DATASEG         equ 0x10
 
 section         .text
 
-extern          isr_handle
 
-interrupt_common:
+%macro          int_common 2
+
+extern          %2
+
+%1:
 
 pusha
 
@@ -19,7 +22,7 @@ mov             fs, ax
 mov             gs, ax
 
 push            esp
-call            isr_handle
+call            %2
 
 add             esp, 4
 
@@ -34,7 +37,15 @@ mov             gs, ax
 popa
 add             esp, 8
 
+sti
 iret
+
+%endmacro
+
+
+int_common      isr_common, isr_handle
+int_common      irq_common, irq_handle
+
 
 %macro          isr_handler 1
 
@@ -46,7 +57,7 @@ cli
 push            0
 push            %1
 
-jmp             interrupt_common
+jmp             isr_common
 
 %endmacro
 
@@ -60,9 +71,25 @@ cli
 
 push            %1
 
-jmp             interrupt_common
+jmp             isr_common
 
 %endmacro
+
+
+%macro          irq_handler 1
+
+global          irq%1
+irq%1:
+
+cli
+
+push            %1
+push            %1 + 32
+
+jmp             irq_common
+
+%endmacro
+
 
 isr_handler     0
 isr_handler     1
@@ -96,3 +123,21 @@ isr_handler     28
 isr_handler     29
 isr_handler     30
 isr_handler     31
+
+irq_handler     0
+irq_handler     1
+irq_handler     2
+irq_handler     3
+irq_handler     4
+irq_handler     5
+irq_handler     6
+irq_handler     7
+irq_handler     8
+irq_handler     9
+irq_handler     10
+irq_handler     11
+irq_handler     12
+irq_handler     13
+irq_handler     14
+irq_handler     15
+irq_handler     16

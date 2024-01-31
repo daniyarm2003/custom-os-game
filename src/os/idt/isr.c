@@ -2,8 +2,12 @@
 #include "idt.h"
 
 #include "../../drivers/terminal.h"
+#include "../../drivers/ports.h"
 
 #define INITIALIZE_ISR(isrNum) idt_set_gate(isrNum, DPL_KERNEL_MODE, IDT_INTERRUPT_GATE_32, isr##isrNum)
+#define INITIALIZE_IRQ(irqNum) idt_set_gate(irqNum + NUM_ISRS, DPL_KERNEL_MODE, IDT_INTERRUPT_GATE_32, irq##irqNum)
+
+static irq_handler_t irqHandlers[NUM_IRQS] = {};
 
 void isr_init() {
     INITIALIZE_ISR(0);
@@ -38,8 +42,65 @@ void isr_init() {
     INITIALIZE_ISR(29);
     INITIALIZE_ISR(30);
     INITIALIZE_ISR(31);
+
+    isr_remap_pic();
+
+    INITIALIZE_IRQ(0);
+    INITIALIZE_IRQ(1);
+    INITIALIZE_IRQ(2);
+    INITIALIZE_IRQ(3);
+    INITIALIZE_IRQ(4);
+    INITIALIZE_IRQ(5);
+    INITIALIZE_IRQ(6);
+    INITIALIZE_IRQ(7);
+    INITIALIZE_IRQ(8);
+    INITIALIZE_IRQ(9);
+    INITIALIZE_IRQ(10);
+    INITIALIZE_IRQ(11);
+    INITIALIZE_IRQ(12);
+    INITIALIZE_IRQ(13);
+    INITIALIZE_IRQ(14);
+    INITIALIZE_IRQ(15);
+}
+
+void isr_remap_pic() {
+    port_outb(PORT_PIC_MASTER_CONTROL, ICW1_INIT | ICW1_ICW4);
+    port_outb(PORT_PIC_SLAVE_CONTROL, ICW1_INIT | ICW1_ICW4);
+
+    port_outb(PORT_PIC_MASTER_DATA, NUM_ISRS);
+    port_outb(PORT_PIC_SLAVE_DATA, NUM_ISRS + SLAVE_PIC_IRQ_START);
+
+    port_outb(PORT_PIC_MASTER_DATA, CASCADE_IRQ_MASK);
+    port_outb(PORT_PIC_SLAVE_DATA, CASCADE_IRQ_NUM);
+
+    port_outb(PORT_PIC_MASTER_DATA, ICW4_8086);
+    port_outb(PORT_PIC_SLAVE_DATA, ICW4_8086);
+
+    // Unmask every IRQ
+    port_outb(PORT_PIC_MASTER_DATA, 0x0);
+    port_outb(PORT_PIC_SLAVE_DATA, 0x0);
+}
+
+void set_irq_handler(size_t irqNum, irq_handler_t handler) {
+    irqHandlers[irqNum] = handler;
 }
 
 void isr_handle(ISRRegisters* regs) {
     terminal_printf("Interrupt Number: %d\n", regs->interruptNum);
+}
+
+void irq_handle(ISRRegisters* regs) {
+    u32 irqNum = regs->errCode;
+
+    if(irqNum >= SLAVE_PIC_IRQ_START) {
+        port_outb(PORT_PIC_SLAVE_CONTROL, PIC_EOI_BYTE);
+    }
+
+    port_outb(PORT_PIC_MASTER_CONTROL, PIC_EOI_BYTE);
+
+    terminal_printf("IRQ: %d\n", irqNum);
+
+    if(irqHandlers[irqNum] != NULL) {
+        irqHandlers[irqNum](regs);
+    }
 }

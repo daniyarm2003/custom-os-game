@@ -13,7 +13,8 @@ void idt_init() {
     isr_init();
 
     asm volatile (
-        "lidtl (%0)"
+        "lidtl (%0)\n"
+        "sti"
         : : "r" (&idtDesc)
     );
 }
