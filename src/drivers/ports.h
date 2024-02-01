@@ -6,8 +6,13 @@
 #define PORT_PIC_MASTER_CONTROL         0x20
 #define PORT_PIC_MASTER_DATA            0x21
 
+#define PORT_PIT_CHANNEL0               0x40
+#define PORT_PIT_CHANNEL1               0x41
+#define PORT_PIT_CHANNEL2               0x42
+#define PORT_PIT_COMMAND                0x43
+
 #define PORT_KEYBOARD_CONTROLLER_DATA   0x60
-#define PORT_KEYBOARD_CONRTOLLER_CMD    0x64
+#define PORT_KEYBOARD_CONTROLLER_CMD    0x64
 
 #define PORT_PIC_SLAVE_CONTROL          0xA0
 #define PORT_PIC_SLAVE_DATA             0xA1

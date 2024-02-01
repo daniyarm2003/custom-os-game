@@ -3,6 +3,7 @@
 #include "include/multiboot.h"
 #include "drivers/terminal.h"
 #include "os/idt/idt.h"
+#include "drivers/timer.h"
 
 void kmain(multiboot_info_t* mBootInfo, u32 magic) {
     UNUSED(magic);
@@ -20,10 +21,8 @@ void kmain(multiboot_info_t* mBootInfo, u32 magic) {
         "int $3"
     );
 
-    // CLI gets called after this function, this loop prevents this
     while(true) {
-        asm volatile(
-            "hlt"
-        );
+        terminal_printf("Hello World!\n");
+        sleep_for_timer_ticks(1000);
     }
 }

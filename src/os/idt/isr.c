@@ -2,6 +2,9 @@
 #include "idt.h"
 
 #include "../../drivers/terminal.h"
+#include "../../drivers/keyboard.h"
+#include "../../drivers/timer.h"
+
 #include "../../drivers/ports.h"
 
 #define INITIALIZE_ISR(isrNum) idt_set_gate(isrNum, DPL_KERNEL_MODE, IDT_INTERRUPT_GATE_32, isr##isrNum)
@@ -61,6 +64,8 @@ void isr_init() {
     INITIALIZE_IRQ(13);
     INITIALIZE_IRQ(14);
     INITIALIZE_IRQ(15);
+
+    isr_init_drivers();
 }
 
 void isr_remap_pic() {
@@ -81,7 +86,12 @@ void isr_remap_pic() {
     port_outb(PORT_PIC_SLAVE_DATA, 0x0);
 }
 
-void set_irq_handler(size_t irqNum, irq_handler_t handler) {
+void isr_init_drivers() {
+    timer_init_handler();
+    keyboard_init_handler();
+}
+
+void irq_set_handler(size_t irqNum, irq_handler_t handler) {
     irqHandlers[irqNum] = handler;
 }
 
@@ -97,8 +107,6 @@ void irq_handle(ISRRegisters* regs) {
     }
 
     port_outb(PORT_PIC_MASTER_CONTROL, PIC_EOI_BYTE);
-
-    terminal_printf("IRQ: %d\n", irqNum);
 
     if(irqHandlers[irqNum] != NULL) {
         irqHandlers[irqNum](regs);

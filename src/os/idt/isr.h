@@ -36,9 +36,10 @@ typedef void(*irq_handler_t)(ISRRegisters* regs);
 
 void isr_init();
 
+void isr_init_drivers();
 void isr_remap_pic();
 
-void set_irq_handler(size_t irqNum, irq_handler_t handler);
+void irq_set_handler(size_t irqNum, irq_handler_t handler);
 
 void isr_handle(ISRRegisters* regs);
 void irq_handle(ISRRegisters* regs);
