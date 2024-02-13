@@ -1,15 +1,19 @@
 #include "lib/string.h"
+#include "lib/memory.h"
 #include "include/basicmacros.h"
 #include "include/multiboot.h"
 #include "drivers/terminal.h"
 #include "os/idt/idt.h"
 #include "drivers/timer.h"
+#include "os/include/linker_symbols.h"
 
 void kmain(multiboot_info_t* mBootInfo, u32 magic) {
     UNUSED(magic);
 
     idt_init();
     terminal_init();
+
+    memory_manager_init(mBootInfo);
 
     terminal_printf("Hello World!\nName: %s\nNum: %d %% %c / %d", (const char*)mBootInfo->boot_loader_name, 65536, 'Y', -7);
 
@@ -21,8 +25,21 @@ void kmain(multiboot_info_t* mBootInfo, u32 magic) {
         "int $3"
     );
 
+    terminal_printf("START: %d, END: %d\n", &kernel_start, &kernel_end);
+
+    void* a = malloc(5);
+    void* b = malloc(17);
+    void* c = malloc(7);
+    void* d = malloc(70);
+
+    free(b);
+    d = realloc(d, 500);
+    free(d);
+
+    debug_free_list();
+
     while(true) {
-        terminal_printf("Hello World!\n");
+        // terminal_printf("Hello World!\n");
         sleep_for_timer_ticks(1000);
     }
 }

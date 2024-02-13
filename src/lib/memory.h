@@ -2,6 +2,7 @@
 #define _OS_MEMORY_H
 
 #include "../include/basictypes.h"
+#include "malloc.h"
 
 void memset(void* dest, u8 data, size_t len);
 void memzero(void* dest, size_t len);
