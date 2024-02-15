@@ -15,19 +15,21 @@ void kmain(multiboot_info_t* mBootInfo, u32 magic) {
 
     memory_manager_init(mBootInfo);
 
-    terminal_printf("Hello World!\nName: %s\nNum: %d %% %c / %d", (const char*)mBootInfo->boot_loader_name, 65536, 'Y', -7);
+    uintptr_t frameBufferAddr = (uintptr_t)mBootInfo->framebuffer_addr;
 
-    for(size_t i = 0; i <= 10; i++) {
-        terminal_printf("Hello World %d!\n", i);
-    }
-
-    asm volatile (
-        "int $3"
-    );
-
-    terminal_printf("START: %d, END: %d\n", &kernel_start, &kernel_end);
+    bool drawBlue = false;
 
     while(true) {
+        for(u32 i = 0; i < 800 * 600; i++) {
+            u32* pixelAddr = (u32*)(frameBufferAddr + 4 * i);
+            u32 pixel = drawBlue ? ((1 << mBootInfo->framebuffer_blue_mask_size) - 1) << mBootInfo->framebuffer_blue_field_position
+                : ((1 << mBootInfo->framebuffer_red_mask_size) - 1) << mBootInfo->framebuffer_red_field_position;
+
+            *pixelAddr = pixel;
+        }
+
         sleep_for_timer_ticks(1000);
+
+        drawBlue = !drawBlue;
     }
 }

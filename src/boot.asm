@@ -2,7 +2,7 @@ MBALIGN         equ 1 << 0
 MEMINFO         equ 1 << 1
 VIDMODE         equ 1 << 2
 
-MBFLAGS         equ MEMINFO | MBALIGN
+MBFLAGS         equ VIDMODE | MEMINFO | MBALIGN
 
 MAGIC           equ 0x1BADB002
 CHECKSUM        equ -(MBFLAGS + MAGIC)
