@@ -27,19 +27,7 @@ void kmain(multiboot_info_t* mBootInfo, u32 magic) {
 
     terminal_printf("START: %d, END: %d\n", &kernel_start, &kernel_end);
 
-    void* a = malloc(5);
-    void* b = malloc(17);
-    void* c = malloc(7);
-    void* d = malloc(70);
-
-    free(b);
-    d = realloc(d, 500);
-    free(d);
-
-    debug_free_list();
-
     while(true) {
-        // terminal_printf("Hello World!\n");
         sleep_for_timer_ticks(1000);
     }
 }

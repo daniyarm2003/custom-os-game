@@ -26,6 +26,4 @@ void* malloc(size_t bytes);
 void* realloc(void* block, size_t bytes);
 void free(void* block);
 
-void debug_free_list();
-
 #endif

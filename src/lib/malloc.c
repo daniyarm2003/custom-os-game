@@ -238,16 +238,3 @@ void free(void* block) {
 
     join_adjacent_free_blocks(blockHeader);
 }
-
-void debug_free_list() {
-    if(freeList == NULL) {
-        terminal_printf("EMPTY FREE LIST\n");
-    }
-    else {
-        terminal_printf("FREE LIST:\n");
-    }
-
-    for(MemoryBlockHeader* freeBlock = freeList; freeBlock != NULL; freeBlock = freeBlock->next) {
-        terminal_printf("BLOCK ADDR: %d, SIZE: %d, SIZEOF HEADER: %d\n", (uintptr_t)freeBlock, freeBlock->size, sizeof(MemoryBlockHeader));
-    }
-}
