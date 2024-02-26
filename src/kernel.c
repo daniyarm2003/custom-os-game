@@ -6,6 +6,7 @@
 #include "os/idt/idt.h"
 #include "drivers/timer.h"
 #include "os/include/linker_symbols.h"
+#include "drivers/graphics.h"
 
 void kmain(multiboot_info_t* mBootInfo, u32 magic) {
     UNUSED(magic);
@@ -14,22 +15,23 @@ void kmain(multiboot_info_t* mBootInfo, u32 magic) {
     terminal_init();
 
     memory_manager_init(mBootInfo);
+    graphics_init(mBootInfo);
 
-    uintptr_t frameBufferAddr = (uintptr_t)mBootInfo->framebuffer_addr;
+    Color testCol;
 
-    bool drawBlue = false;
+    testCol.rgb.red = 0x00;
+    testCol.rgb.green = 0x80;
+    testCol.rgb.blue = 0xFF;
+    testCol.rgb.alpha = 0xFF;
 
     while(true) {
-        for(u32 i = 0; i < 800 * 600; i++) {
-            u32* pixelAddr = (u32*)(frameBufferAddr + 4 * i);
-            u32 pixel = drawBlue ? ((1 << mBootInfo->framebuffer_blue_mask_size) - 1) << mBootInfo->framebuffer_blue_field_position
-                : ((1 << mBootInfo->framebuffer_red_mask_size) - 1) << mBootInfo->framebuffer_red_field_position;
+        graphics_clear_buffer();
 
-            *pixelAddr = pixel;
-        }
+        graphics_draw_rectangle(50, 100, 200, 300, testCol);
 
-        sleep_for_timer_ticks(1000);
-
-        drawBlue = !drawBlue;
+        graphics_update_buffer();
+        sleep_for_timer_ticks(100);
     }
+
+    graphics_terminate();
 }
