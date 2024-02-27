@@ -9,7 +9,6 @@ typedef union color_t {
         u8 blue;
         u8 green;
         u8 red;
-        u8 alpha;
     } rgb;
     u32 value;
 } Color;
