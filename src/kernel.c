@@ -24,13 +24,19 @@ void kmain(multiboot_info_t* mBootInfo, u32 magic) {
     testCol.rgb.blue = 0xFF;
     testCol.rgb.alpha = 0xFF;
 
+    graphics_pos_t x1 = 0;
+    graphics_pos_t y1 = 0;
+
     while(true) {
+        x1 = (x1 + 2) % 1000;
+        y1 = (y1 + 3) % 800;
+
         graphics_clear_buffer();
 
-        graphics_draw_rectangle(50, 100, 200, 300, testCol);
+        graphics_draw_rectangle(x1 - 200, y1 - 200, 200, 200, testCol);
 
         graphics_update_buffer();
-        sleep_for_timer_ticks(100);
+        sleep_for_timer_ticks(10);
     }
 
     graphics_terminate();

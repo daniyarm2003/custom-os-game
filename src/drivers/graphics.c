@@ -1,6 +1,7 @@
 #include "graphics.h"
 
 #include "../lib/memory.h"
+#include "../include/basicmacros.h"
 
 static graphics_pos_t width, height;
 static size_t bytesPerPixel;
@@ -35,16 +36,19 @@ graphics_pos_t graphics_get_height() {
 void graphics_draw_pixel(graphics_pos_t x, graphics_pos_t y, Color color) {
     pixel_t colorValue = color_to_framebuffer_value(color);
 
+    graphics_pos_t clampedX = CLAMP(x, 0, width - 1);
+    graphics_pos_t clampedY = CLAMP(y, 0, height - 1);
+
     for(size_t i = 0; i < bytesPerPixel; i++) {
-        frameDoubleBufferAddr[(y * width + x) * bytesPerPixel + i] = (u8)(colorValue >> (8 * i));
+        frameDoubleBufferAddr[(clampedY * width + clampedX) * bytesPerPixel + i] = (u8)(colorValue >> (8 * i));
     }
 }
 
 void graphics_draw_rectangle(graphics_pos_t x, graphics_pos_t y, graphics_pos_t recWidth, graphics_pos_t recHeight, Color color) {
     pixel_t colorValue = color_to_framebuffer_value(color);
 
-    for(graphics_pos_t yPos = y; yPos < y + recHeight; yPos++) {
-        for(graphics_pos_t xPos = x; xPos < x + recWidth; xPos++) {
+    for(graphics_pos_t yPos = CLAMP(y, 0, height - 1); yPos < CLAMP(y + recHeight, 0, height - 1); yPos++) {
+        for(graphics_pos_t xPos = CLAMP(x, 0, width - 1); xPos < CLAMP(x + recWidth, 0, width - 1); xPos++) {
             for(size_t i = 0; i < bytesPerPixel; i++) {
                 frameDoubleBufferAddr[(yPos * width + xPos) * bytesPerPixel + i] = (u8)(colorValue >> (8 * i));
             }

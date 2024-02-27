@@ -3,7 +3,7 @@
 
 #include "../include/basictypes.h"
 
-typedef u32 graphics_pos_t;
+typedef s32 graphics_pos_t;
 typedef u32 pixel_t;
 
 #endif
