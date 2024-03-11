@@ -3,6 +3,7 @@ ASM := nasm
 
 SRC_DIR ?= src
 BIN_DIR ?= bin
+TOOLS_DIR ?= tools
 
 KERNEL_BIN_NAME ?= kernel.bin
 KERNEL_BIN_FILE := $(BIN_DIR)/$(KERNEL_BIN_NAME)
@@ -37,6 +38,26 @@ C_BIN_FILES := $(patsubst $(SRC_DIR)/%.c,$(BIN_DIR)/%.o,$(C_SRC_FILES))
 ASM_SRC_FILES := $(foreach SRC_SUBDIR,$(SRC_SUBDIRS), $(wildcard $(SRC_SUBDIR)/*.asm))
 ASM_BIN_FILES := $(patsubst $(SRC_DIR)/%.asm,$(BIN_DIR)/%.o,$(ASM_SRC_FILES))
 
+IMAGE_DIR := $(SRC_DIR)/images
+IMAGE_EXTENSIONS ?= png gif jpg
+
+IMAGE_FILES := $(foreach IMAGE_EXTENSION,$(IMAGE_EXTENSIONS),$(wildcard $(IMAGE_DIR)/*.$(IMAGE_EXTENSION)))
+IMAGE_SRC_FILES := $(foreach IMAGE_EXTENSION,$(IMAGE_EXTENSIONS),$(patsubst $(IMAGE_DIR)/%.$(IMAGE_EXTENSION),$(IMAGE_DIR)/%.c,$(filter $(IMAGE_DIR)/%.$(IMAGE_EXTENSION),$(IMAGE_FILES))))
+
+IMAGE_HEADER_NAME ?= images.h
+IMAGE_HEADER_FILE := $(IMAGE_DIR)/$(IMAGE_HEADER_NAME)
+
+IMAGE_TOOL_DIR := $(TOOLS_DIR)/image
+IMAGE_TOOL_BIN_DIR := $(IMAGE_TOOL_DIR)/bin
+
+IMAGE_TOOL_EXEC_NAME ?= imageconvert
+IMAGE_TOOL_EXEC := $(IMAGE_TOOL_BIN_DIR)/$(IMAGE_TOOL_EXEC_NAME)
+
+ifeq (,$(wildcard $(IMAGE_HEADER_FILE)))
+	C_SRC_FILES += $(IMAGE_SRC_FILES)
+	C_BIN_FILES += $(patsubst $(SRC_DIR)/%.c,$(BIN_DIR)/%.o,$(IMAGE_SRC_FILES))
+endif
+
 .PHONY: clean
 
 $(ISO_FILE): $(KERNEL_BIN_FILE) $(GRUB_FILE) | $(ISO_GRUB_DIR)
@@ -49,7 +70,7 @@ $(KERNEL_BIN_FILE): $(ASM_BIN_FILES) $(C_BIN_FILES) $(LINKER_FILE)
 
 -include $(C_BIN_FILES:.o=.d)
 
-$(C_BIN_FILES): $(BIN_DIR)/%.o: $(SRC_DIR)/%.c | $(BIN_SUBDIRS)
+$(C_BIN_FILES): $(BIN_DIR)/%.o: $(SRC_DIR)/%.c | $(BIN_SUBDIRS) $(IMAGE_HEADER_FILE)
 	$(CC) $(C_COMMON_FLAGS) $(C_COMPILE_FLAGS) -o $@ -c $<
 
 $(ASM_BIN_FILES): $(BIN_DIR)/%.o: $(SRC_DIR)/%.asm | $(BIN_SUBDIRS)
@@ -61,5 +82,13 @@ $(ISO_GRUB_DIR): | $(BIN_DIR)
 $(BIN_SUBDIRS):
 	mkdir $@
 
+$(IMAGE_HEADER_FILE): $(IMAGE_FILES) $(IMAGE_TOOL_EXEC)
+	$(IMAGE_TOOL_EXEC) $(IMAGE_DIR) $(IMAGE_HEADER_NAME)
+
+$(IMAGE_TOOL_EXEC):
+	$(MAKE) -C $(IMAGE_TOOL_DIR)
+
 clean:
 	rm -rf $(BIN_DIR)
+	$(MAKE) -C $(IMAGE_TOOL_DIR) clean
+	rm -f $(IMAGE_SRC_FILES) $(IMAGE_HEADER_FILE)

@@ -1,3 +1,5 @@
 bin
 *.log
 .vscode
+src/images/images.h
+src/images/*.c

@@ -8,6 +8,7 @@
 #include "os/include/linker_symbols.h"
 #include "drivers/graphics.h"
 #include "lib/math.h"
+#include "images/images.h"
 
 void kmain(multiboot_info_t* mBootInfo, u32 magic) {
     UNUSED(magic);
@@ -27,7 +28,7 @@ void kmain(multiboot_info_t* mBootInfo, u32 magic) {
     while(true) {
         graphics_clear_buffer();
 
-        graphics_draw_rectangle(50, 50, 200, 300, testCol);
+        graphics_draw_image_scaled(600, 500, 300, 300, &player_image_data);
 
         graphics_update_buffer();
 

@@ -22,4 +22,6 @@ void vec2_div(Vec2* dest, f32 scalar);
 
 void vec2_normalize(Vec2* vec);
 
+f32 vec2_dot(Vec2 a, Vec2 b);
+
 #endif

@@ -49,3 +49,7 @@ void vec2_normalize(Vec2* vec) {
         vec2_div(vec, mag);
     }
 }
+
+f32 vec2_dot(Vec2 a, Vec2 b) {
+    return a.x * b.x + a.y * b.y;
+}
