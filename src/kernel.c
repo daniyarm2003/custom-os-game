@@ -25,10 +25,16 @@ void kmain(multiboot_info_t* mBootInfo, u32 magic) {
     testCol.rgb.green = 0x80;
     testCol.rgb.blue = 0xFF;
 
+    s32 counter = 0;
+    char counterText[256];
+
     while(true) {
         graphics_clear_buffer();
 
-        graphics_draw_image_scaled(600, 500, 300, 300, &player_image_data);
+        sprintf(counterText, "Hello World!\nTest?\nCounter: %d", counter);
+        graphics_draw_text(50, 50, counterText, &font_monospace_image_data, 12, testCol);
+
+        counter++;
 
         graphics_update_buffer();
 

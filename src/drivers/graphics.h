@@ -5,6 +5,7 @@
 #include "../graphics/image.h"
 
 #define GRAPHICS_IMAGE_MIN_ALPHA 0x10
+#define GRAPHICS_FONT_CHAR_SIZE 0x20
 
 void graphics_init(multiboot_info_t* mBootInfo);
 void graphics_terminate();
@@ -17,6 +18,8 @@ void graphics_draw_rectangle(graphics_pos_t x, graphics_pos_t y, graphics_pos_t 
 
 void graphics_draw_image(graphics_pos_t x, graphics_pos_t y, const Image* image);
 void graphics_draw_image_scaled(graphics_pos_t x, graphics_pos_t y, graphics_pos_t width, graphics_pos_t height, const Image* image);
+
+void graphics_draw_text(graphics_pos_t x, graphics_pos_t y, const char* text, const Image* font, graphics_pos_t fontSize, Color color);
 
 void graphics_clear_buffer();
 void graphics_update_buffer();

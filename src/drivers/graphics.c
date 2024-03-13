@@ -109,6 +109,56 @@ void graphics_draw_image_scaled(graphics_pos_t x, graphics_pos_t y, graphics_pos
     }
 }
 
+void graphics_draw_char(graphics_pos_t x, graphics_pos_t y, char ch, const Image* font, graphics_pos_t fontSize, Color color) {
+    size_t imageOffsetIndex = ((size_t)((ch >> 4) & 0xF) * font->width + (size_t)(ch & 0xF)) * GRAPHICS_FONT_CHAR_SIZE * font->bytesPerPixel;
+
+    for(graphics_pos_t yPos = CLAMP(y, 0, height - 1); yPos < CLAMP(y + fontSize, 0, height - 1); yPos++) {
+        for(graphics_pos_t xPos = CLAMP(x, 0, width - 1); xPos < CLAMP(x + fontSize, 0, width - 1); xPos++) {
+
+            f32 imgXPos = (f32)(xPos - x) * (f32)GRAPHICS_FONT_CHAR_SIZE / (f32)fontSize;
+            f32 imgYPos = (f32)(yPos - y) * (f32)GRAPHICS_FONT_CHAR_SIZE / (f32)fontSize;
+
+            size_t imageDataIndex = imageOffsetIndex + (size_t)(((graphics_pos_t)imgYPos * font->width + (graphics_pos_t)imgXPos) * font->bytesPerPixel);
+
+            Color pixelColor;
+
+            pixelColor.rgb.red = font->imageData[imageDataIndex + 0];
+            pixelColor.rgb.green = font->imageData[imageDataIndex + 1];
+            pixelColor.rgb.blue = font->imageData[imageDataIndex + 2];
+
+            if(pixelColor.rgb.red < GRAPHICS_IMAGE_MIN_ALPHA || pixelColor.rgb.green < GRAPHICS_IMAGE_MIN_ALPHA || pixelColor.rgb.blue < GRAPHICS_IMAGE_MIN_ALPHA) {
+                continue;
+            }
+
+            pixelColor.value &= color.value;
+
+            graphics_draw_pixel(xPos, yPos, pixelColor);
+        }
+    }
+}
+
+void graphics_draw_text(graphics_pos_t x, graphics_pos_t y, const char* text, const Image* font, graphics_pos_t fontSize, Color color) {
+    graphics_pos_t curX = x;
+
+    for(const char* ch = text; *ch; ch++) {
+        switch(*ch) {
+            case '\n':
+
+                curX = x;
+                y += fontSize;
+
+                break;
+
+            default:
+
+                graphics_draw_char(curX, y, *ch, font, fontSize, color);
+                curX += fontSize;
+
+                break;
+        }
+    }
+}
+
 void graphics_clear_buffer() {
     memzero(frameDoubleBufferAddr, width * height * bytesPerPixel);
 }
