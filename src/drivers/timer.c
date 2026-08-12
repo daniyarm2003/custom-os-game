@@ -5,6 +5,7 @@
 #include "../include/basicmacros.h"
 
 static timer_t globalTimer = 0;
+static timer_t currentFrequency = TIMER_DEFAULT_FREQUENCY;
 
 static u8 timer_get_command_byte(PITMode mode) {
     return (PIT_RW_MODE_LSB_MSB << 4) | (((u8)mode & 0x7) << 1);
@@ -28,6 +29,12 @@ void timer_set_frequency(timer_t frequency) {
 
     port_outb(PORT_PIT_CHANNEL0, (u8)(divisor & 0xFF));
     port_outb(PORT_PIT_CHANNEL0, (u8)((divisor >> 8) & 0xFF));
+
+    currentFrequency = frequency;
+}
+
+timer_t timer_get_current_frequency() {
+    return currentFrequency;
 }
 
 void sleep_for_timer_ticks(timer_t ticks) {
@@ -38,4 +45,8 @@ void sleep_for_timer_ticks(timer_t ticks) {
             "hlt"
         );
     }
+}
+
+timer_t timer_get_ticks() {
+    return globalTimer;
 }

@@ -27,6 +27,10 @@ typedef enum {
 void timer_init_handler();
 
 void timer_set_frequency(timer_t frequency);
+timer_t timer_get_current_frequency();
+
 void sleep_for_timer_ticks(timer_t ticks);
+
+timer_t timer_get_ticks();
 
 #endif
