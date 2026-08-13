@@ -8,7 +8,7 @@
 static score_t score = 0;
 
 static Level levels[] = {
-    { .backgroundColor.value = 0x0080FF, .initFunc = level1_init, .updateFunc = NULL, .terminateFunc = NULL }
+    { .name = "The First Level", .backgroundColor.value = 0x00A8FF, .initFunc = level1_init, .updateFunc = NULL, .terminateFunc = NULL }
 };
 
 static size_t currentLevelIndex = 0;
