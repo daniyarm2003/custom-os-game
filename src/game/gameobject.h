@@ -42,6 +42,7 @@ typedef void(*gameobj_draw_func_t)(struct gameobject_t*);
 
 typedef struct gameobject_t {
     Vec2 pos, size;
+    Vec2 vel, acc;
     s32 timer;
 
     u8 flags;

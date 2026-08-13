@@ -58,7 +58,7 @@ void gameobject_draw(GameObject* obj, GameObjectDrawLayer currentLayer) {
             break;
 
         case GAMEOBJ_RENDER_TEXTURED:
-            graphics_draw_image((graphics_pos_t)obj->pos.x, (graphics_pos_t)obj->pos.y, obj->renderData.texture);
+            graphics_draw_image_scaled((graphics_pos_t)obj->pos.x, (graphics_pos_t)obj->pos.y, (graphics_pos_t)obj->size.x, (graphics_pos_t)obj->size.y, obj->renderData.texture);
             break;
 
         case GAMEOBJ_RENDER_TEXT:
@@ -80,8 +80,15 @@ GameObject* gameobject_create() {
 
     obj->pos.x = 0.0f;
     obj->pos.y = 0.0f;
+
     obj->size.x = defaultSize;
     obj->size.y = defaultSize;
+
+    obj->vel.x = 0.0f;
+    obj->vel.y = 0.0f;
+    obj->acc.x = 0.0f;
+    obj->acc.y = 0.0f;
+
     obj->timer = 0;
 
     obj->flags = (u8)GAMEOBJ_FLAG_ACTIVE | (u8)GAMEOBJ_FLAG_VISIBLE;
