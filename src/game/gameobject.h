@@ -10,6 +10,8 @@
 #include "../graphics/image.h"
 #include "../graphics/types.h"
 
+#include "collision.h"
+
 #define GAMEOBJ_INSTANCE_DATA_SIZE 1024
 
 typedef enum {
@@ -44,6 +46,8 @@ typedef struct gameobject_t {
     Vec2 pos, size;
     Vec2 vel, acc;
     s32 timer;
+
+    collision_mask_t prevCollisions;
 
     u8 flags;
     GameObjectDrawLayer drawLayer;

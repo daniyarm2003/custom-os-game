@@ -11,7 +11,7 @@ KERNEL_BIN_FILE := $(BIN_DIR)/$(KERNEL_BIN_NAME)
 LINKER_FILE_NAME ?= linker.ld
 LINKER_FILE := $(SRC_DIR)/$(LINKER_FILE_NAME)
 
-ISO_NAME ?= worstosever.iso
+ISO_NAME ?= os_platformer_game.iso
 ISO_DIR_NAME ?= isodir
 
 ISO_DIR := $(BIN_DIR)/$(ISO_DIR_NAME)

@@ -1,0 +1,16 @@
+#ifndef _OS_SCANCODES_H
+#define _OS_SCANCODES_H
+
+#define SCANCODE_W 0x11
+#define SCANCODE_A 0x1E
+#define SCANCODE_S 0x1F
+#define SCANCODE_D 0x20
+
+#define SCANCODE_SPACE 0x39
+
+#define SCANCODE_UP_ARROW 0x48
+#define SCANCODE_LEFT_ARROW 0x4B
+#define SCANCODE_RIGHT_ARROW 0x4D
+#define SCANCODE_DOWN_ARROW 0x50
+
+#endif

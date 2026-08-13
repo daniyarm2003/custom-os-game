@@ -2,30 +2,33 @@
 #include "gameobject_manager.h"
 #include "../drivers/timer.h"
 #include "../drivers/graphics.h"
+#include "objects/player.h"
+#include "level.h"
 
 static score_t score = 0;
 
+static Level levels[] = {
+    { .backgroundColor.value = 0x0080FF, .initFunc = level1_init, .updateFunc = NULL, .terminateFunc = NULL }
+};
+
+static size_t currentLevelIndex = 0;
+
 static void game_update(f32 dt) {
-    game_update_gameobjects(dt);
+    level_update(game_get_current_level(), dt);
 }
 
 static void game_render() {
-    game_draw_gameobjects();
+    graphics_clear_buffer();
+    level_render(game_get_current_level());
+    graphics_update_buffer();
 }
 
 void game_init() {
-    GameObject* testObj = gameobject_create();
-
-    testObj->pos = (Vec2){100.0f, 100.0f};
-    testObj->size = (Vec2){50.0f, 50.0f};
-
-    testObj->renderData.solidColor.value = 0xFF0000;
-    
-    game_add_gameobject(testObj);
+    level_load(game_get_current_level());
 }
 
 void game_terminate() {
-    game_terminate_gameobjects();
+    level_terminate(game_get_current_level());
 }
 
 void game_start() {
@@ -34,10 +37,7 @@ void game_start() {
 
     while(true) {
         game_update(dt);
-
-        graphics_clear_buffer();
         game_render();
-        graphics_update_buffer();
 
         sleep_for_timer_ticks(GAME_SLEEP_TICKS);
 
@@ -57,4 +57,21 @@ score_t game_get_score() {
 
 void game_add_score(score_t scoreToAdd) {
     score += scoreToAdd;
+}
+
+Vec2 game_get_screen_size() {
+    return (Vec2){(f32)graphics_get_width(), (f32)graphics_get_height()};
+}
+
+Level* game_get_current_level() {
+    return &levels[currentLevelIndex];
+}
+
+void advance_to_next_level() {
+    level_terminate(game_get_current_level());
+
+    size_t numLevels = sizeof(levels) / sizeof(Level);
+    currentLevelIndex = (currentLevelIndex + 1) % numLevels;
+
+    level_load(game_get_current_level());
 }

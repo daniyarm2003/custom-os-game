@@ -84,10 +84,10 @@ GameObject* gameobject_create() {
     obj->size.x = defaultSize;
     obj->size.y = defaultSize;
 
-    obj->vel.x = 0.0f;
-    obj->vel.y = 0.0f;
-    obj->acc.x = 0.0f;
-    obj->acc.y = 0.0f;
+    obj->vel = vec2_init();
+    obj->acc = vec2_init();
+
+    obj->prevCollisions = 0;
 
     obj->timer = 0;
 
