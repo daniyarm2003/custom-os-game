@@ -4,6 +4,7 @@
 #include "../controls.h"
 #include "../physics.h"
 #include "../collision.h"
+#include "../gameobject_manager.h"
 
 static void player_update(GameObject* player, f32 dt) {
     f32 playerTopSpeed = 250.0f;
@@ -45,6 +46,30 @@ static void player_update(GameObject* player, f32 dt) {
 
     gameobject_physics_apply_gravity(player);
     gameobject_physics_update_kinematics(player, dt);
+
+    for(GameObjectIterator* cur = gameobject_iterator_get_head(); cur; cur = gameobject_iterator_get_next(cur)) {
+        GameObject* obj = gameobject_iterator_get_object(cur);
+
+        if(obj == player) {
+            continue;
+        }
+
+        if(gameobject_is_colliding(player, obj)) {
+            switch(obj->type) {
+                case GAMEOBJ_TYPE_ITEM:
+                    if(obj->itemProps.onCollect) {
+                        obj->itemProps.onCollect(obj);
+                    }
+
+                    gameobject_destroy(obj);
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
 
     gameobject_reset_collision_state(player);
     gameobject_keep_in_bounds(player, COLLISION_MASK_ALL);

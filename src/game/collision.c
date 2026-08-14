@@ -60,3 +60,14 @@ void gameobject_keep_in_bounds(GameObject* obj, collision_mask_t checkDirs) {
 void gameobject_reset_collision_state(GameObject* obj) {
     obj->prevCollisions = 0;
 }
+
+bool gameobject_is_colliding(GameObject* self, GameObject* other) {
+    Vec2 selfBottomRight = self->pos;
+    Vec2 otherBottomRight = other->pos;
+
+    vec2_add(&selfBottomRight, self->size);
+    vec2_add(&otherBottomRight, other->size);
+
+    return self->pos.x <= otherBottomRight.x && selfBottomRight.x >= other->pos.x
+        && self->pos.y <= otherBottomRight.y && selfBottomRight.y >= other->pos.y;
+}

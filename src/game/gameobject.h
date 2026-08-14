@@ -37,17 +37,28 @@ typedef enum {
     GAMEOBJ_RENDER_COUNT = 3
 } GameObjectRenderType;
 
+typedef enum {
+    GAMEOBJ_TYPE_OTHER,
+    GAMEOBJ_TYPE_ITEM,
+    GAMEOBJ_TYPE_GOAL,
+    GAMEOBJ_TYPE_COLLIDABLE
+} GameObjectType;
+
 struct gameobject_t;
 
 typedef void(*gameobj_update_func_t)(struct gameobject_t*, f32 dt);
 typedef void(*gameobj_draw_func_t)(struct gameobject_t*);
 
+typedef void(*gameobj_item_collect_callback_t)(struct gameobject_t*);
+
 typedef struct gameobject_t {
     Vec2 pos, size;
     Vec2 vel, acc;
-    s32 timer;
+    f32 timer;
 
     collision_mask_t prevCollisions;
+
+    GameObjectType type;
 
     u8 flags;
     GameObjectDrawLayer drawLayer;
@@ -68,6 +79,12 @@ typedef struct gameobject_t {
 
     gameobj_update_func_t updateFunc;
     gameobj_draw_func_t drawFunc;
+
+    struct {
+        f32 oscAmplitude, oscPeriod, oscCenterY;
+        gameobj_item_collect_callback_t onCollect;
+    } itemProps;
+
 } GameObject;
 
 GameObject* gameobject_create();

@@ -35,11 +35,11 @@ bool gameobject_is_destroyed(GameObject* obj) {
 }
 
 void gameobject_update(GameObject* obj, f32 dt) {
+    obj->timer += dt;
+
     if(obj->updateFunc && gameobject_is_active(obj) && !gameobject_is_destroyed(obj)) {
         obj->updateFunc(obj, dt);
     }
-
-    obj->timer++;
 }
 
 void gameobject_draw(GameObject* obj, GameObjectDrawLayer currentLayer) {
@@ -89,7 +89,9 @@ GameObject* gameobject_create() {
 
     obj->prevCollisions = 0;
 
-    obj->timer = 0;
+    obj->type = GAMEOBJ_TYPE_OTHER;
+
+    obj->timer = 0.0f;
 
     obj->flags = (u8)GAMEOBJ_FLAG_ACTIVE | (u8)GAMEOBJ_FLAG_VISIBLE;
     obj->drawLayer = GAMEOBJ_DRAW_LAYER_FOREGROUND_1;

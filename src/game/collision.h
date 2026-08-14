@@ -28,4 +28,6 @@ Vec2 collision_get_direction_vector(CollisionDirection dir);
 void gameobject_reset_collision_state(GameObject* obj);
 void gameobject_keep_in_bounds(GameObject* obj, collision_mask_t checkDirs);
 
+bool gameobject_is_colliding(GameObject* self, GameObject* other);
+
 #endif
