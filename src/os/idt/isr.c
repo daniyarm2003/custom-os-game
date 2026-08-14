@@ -7,6 +7,8 @@
 
 #include "../../drivers/ports.h"
 
+#include "../../include/basicmacros.h"
+
 #define INITIALIZE_ISR(isrNum) idt_set_gate(isrNum, DPL_KERNEL_MODE, IDT_INTERRUPT_GATE_32, isr##isrNum)
 #define INITIALIZE_IRQ(irqNum) idt_set_gate(irqNum + NUM_ISRS, DPL_KERNEL_MODE, IDT_INTERRUPT_GATE_32, irq##irqNum)
 
@@ -131,8 +133,12 @@ void irq_set_handler(size_t irqNum, irq_handler_t handler) {
 }
 
 void isr_handle(ISRRegisters* regs) {
-    u32 interruptNum = regs->interruptNum;
-    terminal_printf("%s\n", isrExceptionNames[interruptNum]);
+    UNUSED(regs);
+    UNUSED(isrExceptionNames);
+
+    // Does not work in graphics mode, needs a different solution
+    // u32 interruptNum = regs->interruptNum;
+    // terminal_printf("%s\n", isrExceptionNames[interruptNum]);
 }
 
 void irq_handle(ISRRegisters* regs) {
