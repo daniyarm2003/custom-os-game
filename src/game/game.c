@@ -67,7 +67,7 @@ Level* game_get_current_level() {
     return &levels[currentLevelIndex];
 }
 
-void advance_to_next_level() {
+void game_advance_to_next_level() {
     level_terminate(game_get_current_level());
 
     size_t numLevels = sizeof(levels) / sizeof(Level);

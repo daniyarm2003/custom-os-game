@@ -20,6 +20,6 @@ void game_add_score(score_t score);
 Vec2 game_get_screen_size();
 
 Level* game_get_current_level();
-void advance_to_next_level();
+void game_advance_to_next_level();
 
 #endif

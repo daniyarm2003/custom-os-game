@@ -3,6 +3,7 @@
 #include "../objects/player.h"
 #include "../objects/cookie.h"
 #include "../objects/platform.h"
+#include "../objects/goal.h"
 
 void level1_init() {
     GameObject* player = player_create((Vec2){10.0f, 500.0f});
@@ -57,4 +58,6 @@ void level1_init() {
     for(size_t i = 0; i < numPlatforms; i++) {
         game_add_gameobject(platform_create(platformDefs[i][0], platformDefs[i][1]));
     }
+
+    game_add_gameobject(goal_create((Vec2){ 750.0f, 100.0f }));
 }
