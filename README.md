@@ -1,6 +1,8 @@
 # Custom OS Game
 
-This project contains a WIP implementation of an OS that runs a game. The OS uses GRUB to handle the switch to protected mode and graphics mode, and the STB image library implementation to convert images to C structures. Everything else is made from scratch, including the memory and string libraries, memory (de)allocation, graphics, input handling, etc. 
+This project contains an implementation of an operating system specifically made for the purpose of running a simple platformer game. The OS uses GRUB to handle the switch to protected mode and graphics mode, and the STB image library implementation to convert images to C structures. Everything else is made from scratch, including the kernel, memory and string libraries, dynamic memory allocation/deallocation, graphics, input handling, and game logic.
+
+![Image of the OS game](readme_resources/game_demo.png)
 
 ## Compilation
 
