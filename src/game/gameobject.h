@@ -40,7 +40,6 @@ typedef enum {
 typedef enum {
     GAMEOBJ_TYPE_OTHER,
     GAMEOBJ_TYPE_ITEM,
-    GAMEOBJ_TYPE_GOAL,
     GAMEOBJ_TYPE_COLLIDABLE
 } GameObjectType;
 

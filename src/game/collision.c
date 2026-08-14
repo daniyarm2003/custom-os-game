@@ -1,5 +1,6 @@
 #include "collision.h"
 #include "game.h"
+#include "gameobject_manager.h"
 
 bool collision_get_mask(collision_mask_t mask, CollisionDirection dir) {
     return (mask & (1 << dir)) != 0;
@@ -54,7 +55,51 @@ void gameobject_keep_in_bounds(GameObject* obj, collision_mask_t checkDirs) {
         collision_set_mask(&edgesHit, COLLISION_DIR_DOWN, true);
     }
 
-    obj -> prevCollisions |= edgesHit;
+    obj->prevCollisions |= edgesHit;
+}
+
+void gameobject_push_out_of_collidables(GameObject* obj) {
+    collision_mask_t wallsHit = 0;
+
+    for(GameObjectIterator* cur = gameobject_iterator_get_head(); cur; cur = gameobject_iterator_get_next(cur)) {
+        GameObject* other = gameobject_iterator_get_object(cur);
+
+        if(other == obj || other->type != GAMEOBJ_TYPE_COLLIDABLE || !gameobject_is_colliding(obj, other)) {
+            continue;
+        }
+
+        Vec2 selfBottomRight = obj->pos;
+        Vec2 otherBottomRight = other->pos;
+
+        vec2_add(&selfBottomRight, obj->size);
+        vec2_add(&otherBottomRight, other->size);
+
+        f32 directionDists[COLLISION_DIR_COUNT] = {0};
+
+        directionDists[COLLISION_DIR_UP] = otherBottomRight.y - obj->pos.y;
+        directionDists[COLLISION_DIR_DOWN] = selfBottomRight.y - other->pos.y;
+        directionDists[COLLISION_DIR_LEFT] = otherBottomRight.x - obj->pos.x;
+        directionDists[COLLISION_DIR_RIGHT] = selfBottomRight.x - other->pos.x;
+
+        CollisionDirection curDir = 0;
+        f32 minDist = directionDists[0];
+
+        for(CollisionDirection dir = 1; dir < COLLISION_DIR_COUNT; dir++) {
+            if(directionDists[dir] < minDist) {
+                minDist = directionDists[dir];
+                curDir = dir;
+            }
+        }
+
+        collision_set_mask(&wallsHit, curDir, true);
+
+        Vec2 mtv = collision_get_direction_vector(curDir);
+
+        vec2_mult(&mtv, -minDist);
+        vec2_add(&obj->pos, mtv);
+
+        obj->prevCollisions |= wallsHit;
+    }
 }
 
 void gameobject_reset_collision_state(GameObject* obj) {

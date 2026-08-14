@@ -11,7 +11,7 @@ static void player_update(GameObject* player, f32 dt) {
     f32 playerAcceleration = 650.0f;
     f32 playerFriction = 0.05f;
 
-    f32 jumpHeight = 2.0f * PIXELS_PER_METER;
+    f32 jumpHeight = 1.5f * PIXELS_PER_METER;
 
     if (controls_is_left_control_pressed() && player->vel.x > -playerTopSpeed) {
         player->acc.x = -playerAcceleration;
@@ -73,6 +73,7 @@ static void player_update(GameObject* player, f32 dt) {
 
     gameobject_reset_collision_state(player);
     gameobject_keep_in_bounds(player, COLLISION_MASK_ALL);
+    gameobject_push_out_of_collidables(player);
 }
 
 GameObject* player_create(Vec2 pos) {
