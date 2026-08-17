@@ -13,8 +13,28 @@ static Level levels[] = {
 
 static size_t currentLevelIndex = 0;
 
+static bool nextLevelFlag = false;
+
+void game_advance_to_next_level() {
+    nextLevelFlag = true;
+}
+
+static void game_update_level_transition() {
+    if(nextLevelFlag) {
+        nextLevelFlag = false;
+
+        level_terminate(game_get_current_level());
+
+        size_t numLevels = sizeof(levels) / sizeof(Level);
+        currentLevelIndex = (currentLevelIndex + 1) % numLevels;
+
+        level_load(game_get_current_level());
+    }
+}
+
 static void game_update(f32 dt) {
     level_update(game_get_current_level(), dt);
+    game_update_level_transition();
 }
 
 static void game_render() {
@@ -65,13 +85,4 @@ Vec2 game_get_screen_size() {
 
 Level* game_get_current_level() {
     return &levels[currentLevelIndex];
-}
-
-void game_advance_to_next_level() {
-    level_terminate(game_get_current_level());
-
-    size_t numLevels = sizeof(levels) / sizeof(Level);
-    currentLevelIndex = (currentLevelIndex + 1) % numLevels;
-
-    level_load(game_get_current_level());
 }

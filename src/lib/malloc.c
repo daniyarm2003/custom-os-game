@@ -60,6 +60,10 @@ void* offset_global_memory_pointer(uintptr_t offset) {
 static void remove_free_block_from_list(MemoryBlockHeader* block, uintptr_t alignedBlockLen) {
     if(block == freeList) {
         freeList = block->next;
+
+        if(freeList != NULL) {
+            freeList->prev = NULL;
+        }
     }
     else {
         block->prev->next = block->next;
@@ -131,6 +135,10 @@ static void join_adjacent_free_blocks(MemoryBlockHeader* newFreeBlock) {
             prevBlock->size = newSize;
             prevBlock->next = newFreeBlock->next;
 
+            if(prevBlock->next != NULL) {
+                prevBlock->next->prev = prevBlock;
+            }
+
             newFreeBlock = prevBlock;
         }
     }
@@ -144,6 +152,10 @@ static void join_adjacent_free_blocks(MemoryBlockHeader* newFreeBlock) {
 
             newFreeBlock->size = newSize;
             newFreeBlock->next = nextBlock->next;
+
+            if(newFreeBlock->next != NULL) {
+                newFreeBlock->next->prev = newFreeBlock;
+            }
         }
     }
 }

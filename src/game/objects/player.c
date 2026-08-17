@@ -32,7 +32,7 @@ static void player_update(GameObject* player, f32 dt) {
     }
 
     if(collision_get_mask(player->prevCollisions, COLLISION_DIR_UP) && player->vel.y < 0.0f) {
-        player->vel.y *= -1.0f;
+        player->vel.y = 0.0f;
     }
 
     if(collision_get_mask(player->prevCollisions, COLLISION_DIR_DOWN)) {
